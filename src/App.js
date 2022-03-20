@@ -8,6 +8,7 @@ import MyInput from './components/UI/input/MyInput.jsx'
 import PostForm from './components/PostForm.jsx'
 import MySelect from './components/UI/select/MySelect.jsx'
 import PostFilter from './components/PostFilter.jsx'
+import MyModal from './components/UI/MyModal/MyModal';
 
 function App() {
   // list of posts
@@ -18,6 +19,7 @@ function App() {
   ])
   function createPost(newPost) {
     setPosts([...posts, newPost])
+    setModal(false)
   }
   function removePost(post) {
     setPosts(posts.filter(v => v.id !== post.id))
@@ -38,10 +40,17 @@ function App() {
       : sortedPost
   }, [filter.query, sortedPost])
 
+  // modal
+  const [modal, setModal] = useState(false)
 
   return (
     <div className="App">
-      <PostForm create={createPost}/>
+      <MyButton onClick={() => setModal(true)}>
+        Create Post
+      </MyButton>
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm create={createPost}/>
+      </MyModal>
       <hr style={{margin: '10px 0'}}/>
       <PostFilter filter={filter} setFilter={setFilter}/>
       <PostList title='List of posts' posts={sortedAndSearchedPost} remove={removePost}/>

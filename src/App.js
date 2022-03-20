@@ -9,6 +9,11 @@ import PostForm from './components/PostForm.jsx'
 import MySelect from './components/UI/select/MySelect.jsx'
 import PostFilter from './components/PostFilter.jsx'
 import MyModal from './components/UI/MyModal/MyModal';
+import {
+  CSSTransition,
+  TransitionGroup,
+} from 'react-transition-group';
+
 
 function App() {
   // list of posts

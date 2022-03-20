@@ -1,4 +1,4 @@
-import React, {useState, useRef, useMemo} from 'react';
+import React, {useState, useRef, useMemo, useEffect} from 'react';
 import Counter from './components/Counter'
 import ClassCounter from './components/ClassCounter'
 import PostItem from './components/PostItem'
@@ -10,6 +10,8 @@ import MySelect from './components/UI/select/MySelect.jsx'
 import PostFilter from './components/PostFilter.jsx'
 import MyModal from './components/UI/MyModal/MyModal';
 import {usePosts} from './hooks/usePost'
+import axios from 'axios';
+
 
 function App() {
   const [modal, setModal] = useState(false)
@@ -23,17 +25,26 @@ function App() {
   function removePost(post) {
     setPosts(posts.filter(v => v.id !== post.id))
   }
+  async function fetchPost() {
+    const response = await axios.get('https://jsonplaceholder.typicode.com/posts')
+    setPosts(response.data)
+  }
 
   const sortedAndSearchedPost = usePosts(posts, filter.sort, filter.query) // custom hook
 
-  setPosts([
-    {id:1, title: 'JS', body: 'lang'},
-    {id:2, title: 'Vue', body: 'easy freamwork'},
-    {id:3, title: 'React', body: 'middle freamwork'},
-  ])
+  // lifecycle hooks, (if deps - like watch properties in Vue)
+  useEffect(() => {
+    console.log('mounted')
+    fetchPost()
+
+    return () => {
+      console.log('unmounted')
+    }
+  }, [])
 
   return (
     <div className="App">
+      <button type="button" onClick={fetchPost}>get posts</button>
       <MyButton onClick={() => setModal(true)}>
         Create Post
       </MyButton>

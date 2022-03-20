@@ -9,19 +9,13 @@ import PostForm from './components/PostForm.jsx'
 import MySelect from './components/UI/select/MySelect.jsx'
 import PostFilter from './components/PostFilter.jsx'
 import MyModal from './components/UI/MyModal/MyModal';
-import {
-  CSSTransition,
-  TransitionGroup,
-} from 'react-transition-group';
-
+import {usePosts} from './hooks/usePost'
 
 function App() {
+  const [modal, setModal] = useState(false)
+  const [filter, setFilter] = useState({sort: '', query: ''}) // search & filter
   // list of posts
-  const [posts, setPosts] = useState([
-    {id:1, title: 'JS', body: 'lang'},
-    {id:2, title: 'Vue', body: 'easy freamwork'},
-    {id:3, title: 'React', body: 'middle freamwork'},
-  ])
+  const [posts, setPosts] = useState([])
   function createPost(newPost) {
     setPosts([...posts, newPost])
     setModal(false)
@@ -30,23 +24,13 @@ function App() {
     setPosts(posts.filter(v => v.id !== post.id))
   }
 
-  // search & filter
-  const [filter, setFilter] = useState({sort: '', query: ''})
-  const sortedPost = useMemo(() => { // the same as computed properties in Vue
-    return filter.sort
-      ? [...posts].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]))
-      : posts
-  }, [filter.sort, posts]) // callback will be called while any variables from the array are changed
+  const sortedAndSearchedPost = usePosts(posts, filter.sort, filter.query) // custom hook
 
-  const sortedAndSearchedPost = useMemo(() => {
-    const searchQueryLowerCase = `${filter.query}`.toLowerCase()
-    return searchQueryLowerCase
-      ? [...posts].filter(p => p.title?.toLowerCase().includes(searchQueryLowerCase) || p.body?.toLowerCase().includes(searchQueryLowerCase))
-      : sortedPost
-  }, [filter.query, sortedPost])
-
-  // modal
-  const [modal, setModal] = useState(false)
+  setPosts([
+    {id:1, title: 'JS', body: 'lang'},
+    {id:2, title: 'Vue', body: 'easy freamwork'},
+    {id:3, title: 'React', body: 'middle freamwork'},
+  ])
 
   return (
     <div className="App">
